@@ -1,0 +1,9 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+FA.pm
+FA/Element.pm
+t/fa_ops.t
+t/element.t
+t/set_ops.t

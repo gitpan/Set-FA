@@ -1,0 +1,48 @@
+Set::FA
+$Name: beta0_1_1 $
+====================
+
+Name           DSLIP  Description                                  Info
+-----------    -----  -------------------------------------------- -----
+Set::FA        adpOa  Operations for sets of finite automata       MROGASKI
+
+DESCRIPTION
+
+  This module provides an interface by which sets of different finite
+  automata can be constructed.  Normal FA execution, stepwise execution,
+  and acceptance tests can be performed for each FA on a single input.
+  The sets can also be manipulated with standard set operations or 
+  manipulated by state or arbitrary identifier.
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+  Set::Object
+  Log::Agent
+
+COPYRIGHT AND LICENCE
+
+  Copyright (c) 2002 Mark Rogaski; all rights reserved.
+
+  This program is free software; you can redistribute it and/or modify 
+  it under the terms of the Artistic License, a copy of which can be 
+  found with perl.  
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  Artistic License for more details.  
+
+--
+$Id: README,v 1.1 2002/03/18 05:43:00 wendigo Exp $
+
