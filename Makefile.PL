@@ -1,36 +1,36 @@
-###########################################################################
-# $Id: Makefile.PL,v 1.1 2002/03/18 05:43:00 wendigo Exp $
-###########################################################################
-#
-# Makefile.PL
-#
-# RCS Revision: $Revision: 1.1 $
-# Date: $Date: 2002/03/18 05:43:00 $
-#
-# Copyright (c) 2002 Mark Rogaski, mrogaski@cpan.org; all rights reserved.
-#
-# See the README file included with the
-# distribution for license information.
-#
-# $Log: Makefile.PL,v $
-# Revision 1.1  2002/03/18 05:43:00  wendigo
-# Initial revision
-#
-#
-###########################################################################
 use ExtUtils::MakeMaker;
 
-WriteMakefile(
-    'NAME'		=> 'Set::FA',
-    'VERSION_FROM'	=> 'FA.pm',
-    'PREREQ_PM'		=> {
-        Set::Object => 1.02,
-        Log::Agent  => 0.2
-    },
-    ($] >= 5.005 ?
-        (
-            ABSTRACT_FROM => 'FA.pm',
-            AUTHOR     => 'Mark Rogaski <mrogaski@cpan.org>') : ()
-        ),
-);
+# See lib/ExtUtils/MakeMaker.pm for details of how to influence
+# the contents of the Makefile that is written.
 
+WriteMakefile
+(
+ ($] ge '5.005') ?
+ (
+  AUTHOR   => 'Ron Savage (ron@savage.net.au)',
+  ABSTRACT => 'A Set of Discrete Finite Automata',
+    ) : (),
+ clean =>
+ {
+	 FILES => 'blib/* Makefile MANIFEST Set-FA-*'
+ },
+ dist =>
+ {
+	 COMPRESS => 'gzip',
+	 SUFFIX   => 'gz'
+ },
+ DISTNAME  => 'Set-FA',
+ NAME      => 'Set::FA',
+ PL_FILES  => {},
+ PREREQ_PM =>
+ {
+	 attributes      => 0.12,
+	 Capture::Tiny   => 0.10, # For testing.
+	 Hash::FieldHash => 0.10,
+	 parent          => 0.224,
+	 Set::Object     => 1.28,
+	 Test::More      => 0.94,
+	 Test::Pod       => 1.44,
+ },
+ VERSION_FROM => 'lib/Set/FA.pm',
+);

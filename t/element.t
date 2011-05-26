@@ -1,112 +1,108 @@
-#!perl
-###########################################################################
-# $Id: element.t,v 1.1 2002/03/18 05:43:00 wendigo Exp $
-###########################################################################
-#
-# Author: Mark Rogaski <mrogaski@cpan.org>
-# RCS Revision: $Revision: 1.1 $
-# Date: $Date: 2002/03/18 05:43:00 $
-#
-###########################################################################
-#
-# See README for license information.
-# 
-###########################################################################
-use Test;
+use Test::More tests => 42;
 
-BEGIN { plan tests => 42 }
+# --------------------------------------
 
-use Set::FA::Element;
-use vars qw( $inct $outct );
-ok(1);
+BEGIN{ use_ok('Set::FA::Element'); }
 
-my $fa = Set::FA::Element->new(
-    states => [ qw( foo bar baz ) ],
-    transitions => [
-        [ "foo", 'b', "bar" ],
-        [ "foo", '.', "foo" ],
-        [ "bar", 'a', "foo" ],
-        [ "bar", 'b', "bar" ],
-        [ "bar", 'c', "baz" ],
-        [ "baz", '.', "baz" ]
-    ],
-    accept => [ 'baz' ]
+my($dfa) = Set::FA::Element -> new
+(
+ accepting   => ['baz'],
+ start       => 'foo',
+ transitions =>
+ [
+  ['foo', 'b', 'bar'],
+  ['foo', '.', 'foo'],
+  ['bar', 'a', 'foo'],
+  ['bar', 'b', 'bar'],
+  ['bar', 'c', 'baz'],
+  ['baz', '.', 'baz'],
+ ],
+ verbose => 0,
 );
 
-ok(UNIVERSAL::isa($fa, 'Set::FA::Element'));
-ok($fa->state('bar'));
-ok(! $fa->state('new_jersey'));
-ok($fa->final('baz'));
-ok(! $fa->final('bar'));
+ok($dfa -> isa('Set::FA::Element') == 1, 'Object isa Set::FA::Element');
+ok($dfa -> state('bar') == 1, 'State is bar');
+ok(! $dfa -> state('new') == 1, 'State is not new');
+ok($dfa -> final('baz') == 1, 'baz is an acceptor');
+ok($dfa -> final('bar') == 0, 'bar is not an acceptor');
 
-ok($fa->step('a'), '');
-ok($fa->state, 'foo');
-ok(! $fa->final);
+ok($dfa -> step('a') eq '', 'step(a) returned nothing');
+ok($dfa -> state eq  'foo', 'State is foo');
+ok($dfa -> final == 0, 'foo is not an acceptor');
 
-ok($fa->step('aa'), 'a');
-ok($fa->state, 'foo');
-ok(! $fa->final);
+ok($dfa -> step('aa') eq 'a', 'step(aa) returned a');
+ok($dfa -> state eq 'foo', 'State is foo');
+ok($dfa -> final == 0, 'foo is not an acceptor');
 
-ok($fa->step('bar'), 'ar');
-ok($fa->state, 'bar');
-ok(! $fa->final);
+ok($dfa -> step('bar') eq 'ar', 'step(bar) returned ar');
+ok($dfa -> state eq 'bar', 'State is bar');
+ok($dfa -> final == 0, 'bar is not an acceptor');
 
-ok($fa->step('c'), '');
-ok($fa->state, 'baz');
-ok($fa->final);
+ok($dfa -> step('c') eq '', 'step(c) returned nothing');
+ok($dfa -> state eq 'baz', 'State is baz');
+ok($dfa -> final == 1, 'baz is an acceptor');
 
-ok($fa->step('cca'), 'ca');
-ok($fa->state, 'baz');
-ok($fa->final);
+ok($dfa -> step('cca') eq 'ca', 'step(cca) returned ca');
+ok($dfa -> state eq 'baz', 'State is baz');
+ok($dfa -> final == 1, 'baz is an acceptor');
 
-ok($fa->step('boo'), 'oo');
-ok($fa->state, 'baz');
-ok($fa->final);
+ok($dfa -> step('boo') eq 'oo', 'step(boo) returned oo');
+ok($dfa -> state eq 'baz', 'State is baz');
+ok($dfa -> final == 1, 'baz is an acceptor');
 
-ok($fa->reset, 'foo');
-ok($fa->state, 'foo');
+ok($dfa -> reset eq 'foo', 'reset returns initial state');
+ok($dfa -> state eq 'foo', 'reset returned initial state');
 
-ok($fa->advance('a'), 'foo');
-ok($fa->advance('ac'), 'foo');
-ok($fa->advance('aaaccb'), 'bar');
-ok($fa->advance('acacbcaaba'), 'baz');
+ok($dfa -> advance('a') eq 'foo', 'advance(a) leads to state foo');
+ok($dfa -> advance('ac') eq 'foo', 'advance(ac) leads to state foo');
+ok($dfa -> advance('aaaccb') eq 'bar', 'advance(aaaccb) leads to state bar');
+ok($dfa -> advance('acacbcaaba') eq 'baz', 'advance(acacbcaaba) leads to state baz');
 
-$fa = Set::FA::Element->new(
-    states => [ qw( foo bar baz ) ],
-    transitions => [
-        [ "foo", 'b', "bar" ],
-        [ "foo", '.', "foo" ],
-        [ "bar", 'a', "foo" ],
-        [ "bar", 'b', "bar" ],
-        [ "bar", 'c', "baz" ],
-        [ "baz", '.', "baz" ]
-    ],
-    actions => {
-        bar => {
-            entry => sub { $inct++; },
-            exit  => sub { $outct++; }
-        }
-    },
-    accept => [ 'baz' ]
+my($entry_count) = 0;
+my($exit_count)  = 0;
+$dfa             = Set::FA::Element -> new
+(
+ accepting => ['baz'],
+ actions   =>
+ {
+	 bar =>
+	 {
+		 entry => sub { $entry_count++; },
+		 exit  => sub { $exit_count++; }
+	 }
+ },
+ start       => 'foo',
+ transitions =>
+ [
+  ['foo', 'b', 'bar'],
+  ['foo', '.', 'foo'],
+  ['bar', 'a', 'foo'],
+  ['bar', 'b', 'bar'],
+  ['bar', 'c', 'baz'],
+  ['baz', '.', 'baz'],
+ ],
+ verbose => 0,
 );
 
-ok(! $fa->accept('abababa'));
-ok($inct, 3);
-ok($outct, 3);
+ok($dfa -> accept('abababa') == 0, 'accept(abababa) does not lead to an acceptor');
+ok($entry_count == 3, 'entry_count is 3');
+ok($exit_count == 3, 'exit_count is 3');
 
-$fa->reset;
-ok($fa->accept('bbbc'));
-ok($inct, 4);
-ok($outct, 4);
+$dfa -> reset;
 
-$fa->reset;
-ok(! $fa->accept('cccbbbaaa'));
-ok($inct, 5);
-ok($outct, 5);
+ok($dfa -> accept('bbbc') == 1, 'accept(bbbc) leads to an acceptor');
+ok($entry_count == 4, 'entry_count is 4');
+ok($exit_count == 4, 'exit_count is 4');
 
-$fa->reset;
-ok($fa->accept('ababababc'));
-ok($inct, 9);
-ok($outct, 9);
+$dfa -> reset;
 
+ok($dfa -> accept('cccbbbaaa') == 0, 'accept(cccbbbaaa) does not lead to an acceptor');
+ok($entry_count == 5, 'entry_count is 5');
+ok($exit_count == 5, 'exit_count is 5');
+
+$dfa -> reset;
+
+ok($dfa -> accept('ababababc') == 1, 'accept(ababababc) leads to an acceptor');
+ok($entry_count == 9, 'entry_count is 9');
+ok($exit_count == 9, 'exit_count is 9');
 

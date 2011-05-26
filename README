@@ -1,48 +1,49 @@
-Set::FA
-$Name: beta0_1_1 $
-====================
+README file for Set::FA.
 
-Name           DSLIP  Description                                  Info
------------    -----  -------------------------------------------- -----
-Set::FA        adpOa  Operations for sets of finite automata       MROGASKI
+See also: CHANGES and Changelog.ini.
 
-DESCRIPTION
+Warning: WinZip 8.1 and 9.0 both contain an 'accidental' bug which stops
+them recognizing POSIX-style directory structures in valid tar files.
+You are better off using a reliable tool such as InfoZip:
+ftp://ftp.info-zip.org/pub/infozip/
 
-  This module provides an interface by which sets of different finite
-  automata can be constructed.  Normal FA execution, stepwise execution,
-  and acceptance tests can be performed for each FA on a single input.
-  The sets can also be manipulated with standard set operations or 
-  manipulated by state or arbitrary identifier.
+1 Installing from a Unix-like distro
+------------------------------------
+shell>gunzip Set-FA-1.00.tgz
+shell>tar mxvf Set-FA-1.00.tar
 
-INSTALLATION
+On Unix-like systems, assuming you have installed Module::Build V 0.25+:
 
-To install this module type the following:
+shell>perl Build.PL
+shell>./Build
+shell>./Build test
+shell>./Build install
 
-   perl Makefile.PL
-   make
-   make test
-   make install
+On MS Windows-like systems, assuming you have installed Module::Build V 0.25+:
 
-DEPENDENCIES
+shell>perl Build.PL
+shell>perl Build
+shell>perl Build test
+shell>perl Build install
 
-This module requires these other modules and libraries:
+Alternately, without Module::Build, you do this:
 
-  Set::Object
-  Log::Agent
+Note: 'make' on MS Windows-like systems may be called 'nmake' or 'dmake'.
 
-COPYRIGHT AND LICENCE
+shell>perl Makefile.PL
+shell>make
+shell>make test
+shell>su              (for Unix-like systems)
+shell>make install
+shell>exit            (for Unix-like systems)
 
-  Copyright (c) 2002 Mark Rogaski; all rights reserved.
+On all systems:
 
-  This program is free software; you can redistribute it and/or modify 
-  it under the terms of the Artistic License, a copy of which can be 
-  found with perl.  
-  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  Artistic License for more details.  
+Run Command.pm through you favourite pod2html translator.
 
---
-$Id: README,v 1.1 2002/03/18 05:43:00 wendigo Exp $
-
+2 Installing from an ActiveState distro
+---------------------------------------
+shell>unzip Set-FA-1.00.zip
+shell>ppm install --location=. Set-FA
+shell>del Set-FA-1.00.ppd
+shell>del PPM-Set-FA-1.00.tar.gz

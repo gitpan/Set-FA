@@ -1,9 +1,15 @@
-Changes
+Build.PL
+Changelog.ini
+CHANGES
+lib/Set/FA.pm
+lib/Set/FA/Element.pm
 Makefile.PL
-MANIFEST
+MANIFEST			This list of files
+META.json
+META.yml
 README
-FA.pm
-FA/Element.pm
-t/fa_ops.t
 t/element.t
-t/set_ops.t
+t/fa.ops.t
+t/pod.t
+t/report.t
+t/set.ops.t
