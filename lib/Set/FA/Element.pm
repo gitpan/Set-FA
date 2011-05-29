@@ -18,7 +18,7 @@ fieldhash my %stt         => 'stt';
 fieldhash my %transitions => 'transitions';
 fieldhash my %verbose     => 'verbose';
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 # -----------------------------------------------
 
@@ -274,7 +274,7 @@ sub log
 	$level   ||= 'debug';
 	$message ||= '';
 
-	$self -> logger ? $self -> logger($level => $message) : $level eq 'error' ? die $message : $self -> verbose ? print "$level: $message\n" : '';
+	$self -> logger ? $self -> logger -> log($level => $message) : $level eq 'error' ? die $message : $self -> verbose ? print "$level: $message\n" : '';
 
 } # End of log.
 
@@ -884,13 +884,13 @@ If you call it as $dfa -> log(), $level defaults to 'debug' and $message default
 
 log() then executes this, admittedly complex, line:
 
-	$self -> logger                       # If there is a logger...
-	? $self -> logger($level => $message) # Call it.
-	: $level eq 'error'                   # Otherwise (no logger) and it's an error...
-	? die $message                        # Die.
-	: $self -> verbose                    # Otherwise (no error) and we're verbose...
-	? print "$level: $message\n"          # Print.
-	: '';                                 # Otherwise (silent) do nothing.
+	$self -> logger                              # If there is a logger...
+	? $self -> logger -> log($level => $message) # Call it.
+	: $level eq 'error'                          # Otherwise (no logger) and it's an error...
+	? die $message                               # Die.
+	: $self -> verbose                           # Otherwise (no error) and we're verbose...
+	? print "$level: $message\n"                 # Print.
+	: '';                                        # Otherwise (silent) do nothing.
 
 =head2 logger([$logger_object])
 

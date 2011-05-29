@@ -1,5 +1,9 @@
 Revision history for Perl extension DFA::Command.
 
+1.02  Sun May 29 12:35:00 2011
+	  - Fix bug in Set::FA::Element.report(). Code called $self -> logger($level => $message)
+	  	instead of $self -> logger -> log($level => $message).
+
 1.01  Sun May 29 11:17:00 2011
 	  - Add Mark Rogaski's name to the Author section, not just the Credit section, of each POD.
 	  - Change Set::FA::Element's report() to output at log level info, rather than debug.
