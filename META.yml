@@ -17,10 +17,10 @@ name: Set-FA
 provides:
   Set::FA:
     file: lib/Set/FA.pm
-    version: 1.02
+    version: 1.03
   Set::FA::Element:
     file: lib/Set/FA/Element.pm
-    version: 1.02
+    version: 1.03
 requires:
   Capture::Tiny: 0.1
   Hash::FieldHash: 0.1
@@ -29,4 +29,4 @@ requires:
   parent: 0.224
 resources:
   license: http://opensource.org/licenses/artistic-license.php
-version: 1.02
+version: 1.03

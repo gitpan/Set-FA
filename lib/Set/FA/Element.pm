@@ -18,7 +18,7 @@ fieldhash my %stt         => 'stt';
 fieldhash my %transitions => 'transitions';
 fieldhash my %verbose     => 'verbose';
 
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 # -----------------------------------------------
 
@@ -326,13 +326,12 @@ sub report
 			$s .= ". Exit fn: $$stt{$state}{exit}";
 		}
 
-		$s .= '. Rules:';
-
 		$self -> log(info => $s);
+		$self -> log(info => 'Rule => Next state');
 
 		for $rule (@{$$stt{$state}{rule} })
 		{
-			$self -> log(info => $$rule[2]);
+			$self -> log(info => "/$$rule[2]/ => $$rule[1]");
 		}
 	}
 
