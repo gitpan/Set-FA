@@ -24,15 +24,15 @@ my($dfa) = Set::FA::Element -> new
 
 my($expect) = <<EOS;
 debug: Entered report()
-debug: State: bar. Rules:
-debug: a
-debug: b
-debug: c
-debug: State: baz. This is an accepting state. Rules:
-debug: .
-debug: State: foo. This is the start state. Rules:
-debug: b
-debug: .
+info: State: bar. Rules:
+info: a
+info: b
+info: c
+info: State: baz. This is an accepting state. Rules:
+info: .
+info: State: foo. This is the start state. Rules:
+info: b
+info: .
 EOS
 my(@expect)          = split(/\n/, $expect);
 my($stdout, $stderr) = capture{$dfa -> report};

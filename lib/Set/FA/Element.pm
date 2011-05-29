@@ -18,7 +18,7 @@ fieldhash my %stt         => 'stt';
 fieldhash my %transitions => 'transitions';
 fieldhash my %verbose     => 'verbose';
 
-our $VERSION = '1.00';
+our $VERSION = '1.01';
 
 # -----------------------------------------------
 
@@ -328,11 +328,11 @@ sub report
 
 		$s .= '. Rules:';
 
-		$self -> log(debug => $s);
+		$self -> log(info => $s);
 
 		for $rule (@{$$stt{$state}{rule} })
 		{
-			$self -> log(debug => $$rule[2]);
+			$self -> log(info => $$rule[2]);
 		}
 	}
 
@@ -1183,7 +1183,7 @@ L<https://rt.cpan.org/Public/Dist/Display.html?Name=Set::FA>.
 
 =head1 Author
 
-L<Set::FA::Element> was written by Ron Savage I<E<lt>ron@savage.net.auE<gt>> in 2011.
+L<Set::FA::Element> was written by Mark Rogaski and Ron Savage I<E<lt>ron@savage.net.auE<gt>> in 2011.
 
 Home page: L<http://savage.net.au/index.html>.
 

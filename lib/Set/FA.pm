@@ -4,7 +4,7 @@ use parent 'Set::Object';
 use strict;
 use warnings;
 
-our $VERSION = '1.00';
+our $VERSION = '1.01';
 
 # -----------------------------------------------
 
@@ -377,7 +377,7 @@ L<https://rt.cpan.org/Public/Dist/Display.html?Name=Set::FA>.
 
 =head1 Author
 
-L<Set::FA> was written by Ron Savage I<E<lt>ron@savage.net.auE<gt>> in 2011.
+L<Set::FA> was written by Mark Rogaski and Ron Savage I<E<lt>ron@savage.net.auE<gt>> in 2011.
 
 Home page: L<http://savage.net.au/index.html>.
 

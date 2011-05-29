@@ -1,5 +1,13 @@
 Revision history for Perl extension DFA::Command.
 
+1.01  Sun May 29 11:17:00 2011
+	  - Add Mark Rogaski's name to the Author section, not just the Credit section, of each POD.
+	  - Change Set::FA::Element's report() to output at log level info, rather than debug.
+	  	The first line of output, 'Entered report()', is still at level debug, the same as all
+		other method entry messages. It's just the body of the report at level info.
+		This means you can now get the report without triggering all debug messages.
+		Patch t/report.t to match.
+
 1.00  Tue May 24 14:02:00 2011
 	  - Co-maint is now with Ron Savage, who will do all future development, starting with this version.
 	  - Rewrite Set::FA::Element to use getters/setters via Hash::FieldHash, rather than use direct
