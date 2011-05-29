@@ -18,7 +18,7 @@ fieldhash my %stt         => 'stt';
 fieldhash my %transitions => 'transitions';
 fieldhash my %verbose     => 'verbose';
 
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 # -----------------------------------------------
 
@@ -88,6 +88,7 @@ sub build_stt
 	my($row)       = 0;
 
 	my(%accept);
+	my($entry_fn, $entry_name, $exit_fn, $exit_name);
 	my($last);
 	my($next);
 	my($rule_sub, $rule);
@@ -144,11 +145,45 @@ sub build_stt
 		}
 		else
 		{
+			$entry_fn = $entry_name = $exit_fn = $exit_name = '';
+
+			if ($action{$state} && $action{$state}{entry})
+			{
+				$entry_fn = $action{$state}{entry};
+
+				if (ref $entry_fn eq 'ARRAY')
+				{
+					$entry_name = $$entry_fn[1];
+					$entry_fn   = $$entry_fn[0];
+				}
+				else
+				{
+					$entry_name = $entry_fn;
+				}
+			}
+
+			if ($action{$state} && $action{$state}{exit})
+			{
+				$exit_fn = $action{$state}{exit};
+
+				if (ref $exit_fn eq 'ARRAY')
+				{
+					$exit_name = $$exit_fn[1];
+					$exit_fn   = $$exit_fn[0];
+				}
+				else
+				{
+					$exit_name = $exit_fn;
+				}
+			}
+
 			$stt{$state} =
 			{
-				accept => $accept{$state} || 0,
-				entry  => $action{$state} && $action{$state}{entry} ? $action{$state}{entry} : '',
-				exit   => $action{$state} && $action{$state}{exit}  ? $action{$state}{exit}  : '',
+				accept     => $accept{$state} || 0,
+				entry_fn   => $entry_fn,
+				entry_name => $entry_name,
+				exit_fn    => $exit_fn,
+				exit_name  => $exit_name,
 				rule   => [ [$rule_sub, $next, $rule] ],
 				start  => 0,
 			};
@@ -316,14 +351,14 @@ sub report
 			$s .= '. This is an accepting state';
 		}
 
-		if ($$stt{$state}{entry})
+		if ($$stt{$state}{entry_fn})
 		{
-			$s .= ". Entry fn: $$stt{$state}{entry}";
+			$s .= ". Entry fn: $$stt{$state}{entry_name}";
 		}
 
-		if ($$stt{$state}{exit})
+		if ($$stt{$state}{exit_fn})
 		{
-			$s .= ". Exit fn: $$stt{$state}{exit}";
+			$s .= ". Exit fn: $$stt{$state}{exit_name}";
 		}
 
 		$self -> log(info => $s);
@@ -385,7 +420,7 @@ sub step
 		if (defined $match)
 		{
 			$self -> match($match);
-			$self -> step_state($next);
+			$self -> step_state($next, $rule, $match);
 
 			return $output;
 		}
@@ -399,7 +434,7 @@ sub step
 
 sub step_state
 {
-	my($self, $next) = @_;
+	my($self, $next, $rule, $match) = @_;
 
 	$self -> log(debug => 'Entered step_state()');
 
@@ -409,19 +444,19 @@ sub step_state
 
 	my($stt) = $self -> stt;
 
-	if ($$stt{$current}{exit})
+	if ($$stt{$current}{exit_fn})
 	{
-		$$stt{$current}{exit} -> ($self);
+		$$stt{$current}{exit_fn} -> ($self);
 	}
 
 	$self -> current($next);
 
-	if ($$stt{$next}{entry})
+	if ($$stt{$next}{entry_fn})
 	{
-		$$stt{$next}{entry} -> ($self);
+		$$stt{$next}{entry_fn} -> ($self);
 	}
 
-	$self -> log(warning => "Successfully advanced from state '$current' to '$next'");
+	$self -> log(warning => "Stepped from state '$current' to '$next' using rule /$rule/ to match '$match'");
 
 	return 1;
 
@@ -570,13 +605,23 @@ Format:
 
 =over 4
 
-=item o entry => function_name
+=item o entry => \&function or => [\&function, 'function_name']
 
-The 'entry' key points to the name of a function called upon entry to a state.
+The 'entry' key points to a reference to a function to be called upon entry to a state.
 
-=item o exit => function_name
+Alternately, you can pass in an arrayref, with the function reference as the first element,
+and a string, e.g. the function name, as the second element.
 
-The 'exit' key points to the name of a function called upon exit from a state.
+The point of the [\&fn, 'fn'] version is when you call report(), and the 'fn' string is output.
+
+=item o exit => \&function or => [\&function, 'function_name']
+
+The 'exit' key points to a reference to a function to be called upon exit from a state.
+
+Alternately, you can pass in an arrayref, with the function reference as the first element,
+and a string, e.g. the function name, as the second element.
+
+The point of the [\&fn, 'fn'] version is when you call report(), and the 'fn' string is output.
 
 =back
 

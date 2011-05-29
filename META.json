@@ -38,11 +38,11 @@
    "provides" : {
       "Set::FA" : {
          "file" : "lib/Set/FA.pm",
-         "version" : "1.03"
+         "version" : "1.04"
       },
       "Set::FA::Element" : {
          "file" : "lib/Set/FA/Element.pm",
-         "version" : "1.03"
+         "version" : "1.04"
       }
    },
    "release_status" : "stable",
@@ -51,5 +51,5 @@
          "http://opensource.org/licenses/artistic-license.php"
       ]
    },
-   "version" : "1.03"
+   "version" : "1.04"
 }
