@@ -8,7 +8,7 @@ build_requires:
 configure_requires:
   Module::Build: 0.38
 dynamic_config: 1
-generated_by: 'Module::Build version 0.38, CPAN::Meta::Converter version 2.110580'
+generated_by: 'Module::Build version 0.38, CPAN::Meta::Converter version 2.110930'
 license: artistic
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -17,10 +17,10 @@ name: Set-FA
 provides:
   Set::FA:
     file: lib/Set/FA.pm
-    version: 1.04
+    version: 1.05
   Set::FA::Element:
     file: lib/Set/FA/Element.pm
-    version: 1.04
+    version: 1.05
 requires:
   Capture::Tiny: 0.1
   Hash::FieldHash: 0.1
@@ -29,4 +29,4 @@ requires:
   parent: 0.224
 resources:
   license: http://opensource.org/licenses/artistic-license.php
-version: 1.04
+version: 1.05

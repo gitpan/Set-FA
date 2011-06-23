@@ -18,7 +18,7 @@ fieldhash my %stt         => 'stt';
 fieldhash my %transitions => 'transitions';
 fieldhash my %verbose     => 'verbose';
 
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 
@@ -309,7 +309,20 @@ sub log
 	$level   ||= 'debug';
 	$message ||= '';
 
-	$self -> logger ? $self -> logger -> log($level => $message) : $level eq 'error' ? die $message : $self -> verbose ? print "$level: $message\n" : '';
+	if ($self -> logger)
+	{
+		$self -> logger -> $level($message);
+	}
+	elsif ($level eq 'error')
+	{
+		die $message;
+	}
+	elsif ($self -> verbose)
+	{
+		print "$level: $message\n";
+	}
+
+	return $self;
 
 } # End of log.
 
@@ -456,7 +469,7 @@ sub step_state
 		$$stt{$next}{entry_fn} -> ($self);
 	}
 
-	$self -> log(warning => "Stepped from state '$current' to '$next' using rule /$rule/ to match '$match'");
+	$self -> log(info => "Stepped from state '$current' to '$next' using rule /$rule/ to match '$match'");
 
 	return 1;
 
@@ -668,7 +681,7 @@ The default is ''.
 
 =item o logger => $logger_object
 
-Provides a logger object whose log($level => $message) method is called at certain times.
+Provides a logger object whose $level($message) method is called at certain times.
 
 See L</Why such a different approach to logging?> in the L</FAQ> for details.
 
@@ -811,15 +824,15 @@ Logging note:
 
 =item o When die_on_loop is 0
 
-Then, advance() calls log(warning => $message) on the logger, if any, when input is not consumed.
+Then, advance() calls $your_logger -> warning($message) when input is not consumed.
 
-If there is no logger, calls print "$message\n". But, when verbose is 0, does nothing.
+If there is no logger, calls print "warning: $message\n". But, when verbose is 0, prints nothing.
 
 =item o When die_on_loop is 1
 
-Then, advance() calls log(error => $message) on the logger, if any, when input is not consumed.
+Then, advance() calls $your_logger -> error($message) when input is not consumed.
 
-If there is no logger, calls print "$message\n". But, when verbose is 0, dies.
+If there is no logger, calls die $message.
 
 =back
 
@@ -922,19 +935,29 @@ Returns the object, for method chaining.
 
 =back
 
-=head2 log($level, $message)
+=head2 log([$level, $message])
+
+Here, the [] indicate an optional parameters.
 
 If you call it as $dfa -> log(), $level defaults to 'debug' and $message defaults to ''.
 
 log() then executes this, admittedly complex, line:
 
-	$self -> logger                              # If there is a logger...
-	? $self -> logger -> log($level => $message) # Call it.
-	: $level eq 'error'                          # Otherwise (no logger) and it's an error...
-	? die $message                               # Die.
-	: $self -> verbose                           # Otherwise (no error) and we're verbose...
-	? print "$level: $message\n"                 # Print.
-	: '';                                        # Otherwise (silent) do nothing.
+	if ($self -> logger)                     # If there is a logger...
+	{
+	    $self -> logger -> $level($message); # Call it.
+	}
+	elsif ($level eq 'error')                # Otherwise (no logger) and it's an error...
+	{
+	    die $message;                        # Die.
+	}
+	elsif ($self -> verbose)                 # Otherwise (no error) and we're in verbose mode...
+	{
+	    print "$level: $message\n";          # Print.
+	}
+	                                         # Otherwise (silent) do nothing.
+
+Returns the object, for method chaining.
 
 =head2 logger([$logger_object])
 
@@ -944,21 +967,21 @@ Here, the [] indicate an optional parameter.
 
 =item o When $logger_object is not provided
 
-Returns the logger object.
+Sets the internal logger object to ''.
 
 =item o When $logger_object is provided
 
-Sets the logger object.
+Sets the internal logger object to $logger_object.
 
 This allows you to change the log levels accepted and suppressed by the logger object,
 during the run of the DFA.
 
-You are strongly advised to read the discussion of logging in the L</FAQ>, as well as the notes
+You are strongly advised to read L</Why such a different approach to logging?>, as well as the notes
 on the logging and verbose options to new().
 
-Returns the object, for method chaining.
-
 =back
+
+Returns the internal logger object, or ''.
 
 =head2 match([$consumed_input])
 
@@ -1149,8 +1172,7 @@ This makes it easy to change the quantity of progress reports.
 
 Firstly, L<Set::FA::Element> used L<Log::Agent>. I always use L<Log::Handler> these days.
 
-By default (i.e. without a logger object), L<Set::FA::Element> prints warning and debug messages to STDOUT,
-and dies upon errors.
+By default (i.e. without a logger object), L<Set::FA::Element> prints messages to STDOUT, and dies upon errors.
 
 However, by supplying a log object, you can capture these events.
 
@@ -1161,21 +1183,24 @@ Specifically, $logger_object -> log(debug => 'Entered x()') is called at the sta
 
 Setting your log level to 'debug' will cause these messages to appear.
 
-Setting your log level to 'warning' or 'error' will suppress them.
+Setting your log level to anything below 'debug', e.g. 'info, 'notice', 'warning' or 'error', will suppress them.
 
-Also, L</step_state($next)> calls log(warning => "Successfully advanced from '$old_state' to '$new_state'")
+Also, L</step_state($next)> calls:
+
+	$self -> log(info => "Stepped from state '$current' to '$next' using rule /$rule/ to match '$match'");
+
 just before it returns.
 
-Setting your log level to error will suppress this message.
+Setting your log level to anything below 'info', e.g. 'notice', 'warning' or 'error', will suppress this message.
 
-Hence, by setting the log level to 'warning', you can log just 1 line per state transition, and no other
+Hence, by setting the log level to 'info', you can log just 1 line per state transition, and no other
 messages, to minimize output.
 
 Lastly, although this logging mechanism may seem complex, it has distinct advantages:
 
 =over 4
 
-=item o A design fault in L<Log::Agent>
+=item o A design fault in L<Log::Agent> (used by the previous author):
 
 This method uses a global variable to control the level of logging. This means the code using
 L<Set::FA::Element> can (also) use L<Log::Agent> and call logconfig(...),
@@ -1185,23 +1210,16 @@ program which changes the configuration affects all other running programs using
 
 =item o Log levels
 
-Debug and warning messages can be suppressed by configuring your logger object, either before calling new()
-or at any later time.
-
-=item o Even better, you can intercept calls to your logger object's log() method
-
-For instance, you could pass in $self as new(logger => $self) from the object using L<Set::FA::Element>,
-so that when L<Set::FA::Element> calls $logger -> log(...), it calls your object's log() method.
-
-In other words, your object's log method is called, and you can then delegate the call to the real logger.
+You can configure your logger object, either before calling new(), or at any later time, by changing your logger object,
+and then calling L</logger($logger_object)>.
 
 That allows you complete control over the logging activity.
 
-=item o This module documents its debug and warning messages.
+=back
+
+The only log levels output by this code are (from high to low): debug, info, warning and error.
 
 Error messages are self-documenting, in that when you trigger them, you get to read them...
-
-=back
 
 =head1 Machine-Readable Change Log
 
