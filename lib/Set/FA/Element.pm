@@ -18,7 +18,7 @@ fieldhash my %stt         => 'stt';
 fieldhash my %transitions => 'transitions';
 fieldhash my %verbose     => 'verbose';
 
-our $VERSION = '1.06';
+our $VERSION = '1.07';
 
 # -----------------------------------------------
 
@@ -833,9 +833,7 @@ If there is no logger, calls print "warning: $message\n". But, when verbose is 0
 
 =item o When die_on_loop is 1
 
-Then, advance() calls $your_logger -> error($message) when input is not consumed.
-
-If there is no logger, calls die $message.
+Calls die($message).
 
 =back
 
@@ -944,17 +942,20 @@ Here, the [] indicate an optional parameters.
 
 If you call it as $dfa -> log(), $level defaults to 'debug' and $message defaults to ''.
 
-log() then executes this, admittedly complex, line:
+Firstly, the error level is checked:
+
+	if ($level eq 'error')
+	{
+	    die $message;
+	}
+
+If not an error, log() then executes this line:
 
 	if ($self -> logger)                     # If there is a logger...
 	{
 	    $self -> logger -> $level($message); # Call it.
 	}
-	elsif ($level eq 'error')                # Otherwise (no logger) and it's an error...
-	{
-	    die $message;                        # Die.
-	}
-	elsif ($self -> verbose)                 # Otherwise (no error) and we're in verbose mode...
+	elsif ($self -> verbose)                 # Otherwise (no logger) and we're in verbose mode...
 	{
 	    print "$level: $message\n";          # Print.
 	}

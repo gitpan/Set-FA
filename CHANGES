@@ -1,5 +1,9 @@
 Revision history for Perl extension Set::FA.
 
+1.07  Wed Jun 29 11:55:00 2011
+	  - No code changes.
+	  - Update the docs to properly reflect the change to the log() method done in V 1.06.
+
 1.06  Mon Jun 27 11:50:00 2011
 	  - When stuck in a loop, log the next 5 chars - if any - in hex before dying.
 	  - Change the log() method in Set::FA::Element to always call die when level is 'error', and not just when
