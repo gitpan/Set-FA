@@ -18,7 +18,7 @@ fieldhash my %stt         => 'stt';
 fieldhash my %transitions => 'transitions';
 fieldhash my %verbose     => 'verbose';
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 # -----------------------------------------------
 
@@ -347,6 +347,7 @@ sub report
 	my($self) = @_;
 
 	$self -> log(debug => 'Entered report()');
+	$self -> log(info => 'State Transition Table');
 
 	my($stt) = $self -> stt;
 
@@ -1004,6 +1005,10 @@ Sets the internal string which will be returned by calling match().
 Returns the object, for method chaining.
 
 =back
+
+=head2 report()
+
+Log the state transition table, at log level 'info'.
 
 =head2 reset()
 

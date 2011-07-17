@@ -1,5 +1,8 @@
 Revision history for Perl extension Set::FA.
 
+1.08  Sun Jul 17 12:40:00 201
+	  - Document the Set::FA::Element::report() method. Patch t/report.t to match.
+
 1.07  Wed Jun 29 11:55:00 2011
 	  - No code changes.
 	  - Update the docs to properly reflect the change to the log() method done in V 1.06.

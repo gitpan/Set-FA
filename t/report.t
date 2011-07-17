@@ -24,6 +24,7 @@ my($dfa) = Set::FA::Element -> new
 
 my($expect) = <<EOS;
 debug: Entered report()
+info: State Transition Table
 info: State: bar
 info: Rule => Next state
 info: /a/ => foo
